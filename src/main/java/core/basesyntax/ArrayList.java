@@ -58,7 +58,7 @@ public class ArrayList<T> implements List<T> {
                 + list.size() > elementData.length) {
             elementData = grow();
         }
-        for (int i = 0; i <= list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             arrList[i] = list.get(i);
         }
         System.arraycopy(list, 0, elementData, countOfElement, list.size());
