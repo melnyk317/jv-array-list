@@ -53,7 +53,8 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public void addAll(List<T> list) {
-        while (countOfElement == elementData.length || countOfElement + list.size() > elementData.length) {
+        while (countOfElement == elementData.length || countOfElement
+                + list.size() > elementData.length) {
             elementData = grow();
         }
         System.arraycopy(list, 0, elementData, countOfElement, list.size());
@@ -78,16 +79,17 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T remove(int index) {
+        Object removedObject = null;
         if (index < countOfElement) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
-        Object removed_object = elementData[index];
+        removedObject = elementData[index];
         Object[] newData = new Object[sizeOfArrey];
         System.arraycopy(elementData, 0, newData, 0, index + 1);
         System.arraycopy(elementData, index + 1, newData, index, countOfElement - index + 1);
         elementData = newData;
         countOfElement--;
-        return (T)removed_object;
+        return (T) removedObject;
     }
 
     @Override
