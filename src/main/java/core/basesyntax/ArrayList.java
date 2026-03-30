@@ -5,69 +5,66 @@ import java.util.NoSuchElementException;
 public class ArrayList<T> implements List<T> {
     private static final int DEFAULT_CAPACITY = 10;
     private Object[] elementData;
-    private int countOfElement;
-    private int sizeOfArrey;
+    private int size;
 
     public ArrayList() {
         elementData = new Object[DEFAULT_CAPACITY];
-        countOfElement = 0;
-        sizeOfArrey = DEFAULT_CAPACITY;
+        size = 0;
     }
 
     private Object[] grow() {
-        sizeOfArrey = sizeOfArrey + sizeOfArrey / 2;
-        Object[] newData = new Object[sizeOfArrey];
-        System.arraycopy(elementData, 0, newData, 0, countOfElement);
+        Object[] newData = new Object[elementData.length + elementData.length / 2];
+        System.arraycopy(elementData, 0, newData, 0, size);
         return newData;
     }
 
     @Override
     public void add(T value) {
-        if (countOfElement == elementData.length) {
+        if (size == elementData.length) {
             elementData = grow();
         }
-        elementData[countOfElement] = value;
-        countOfElement++;
+        elementData[size] = value;
+        size++;
     }
 
     @Override
     public void add(T value, int index) {
-        if (index < 0 || index >= countOfElement) {
+        if (index < 0 || index > size) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
-        if (index == countOfElement + 1) {
+        if (index == size + 1) {
             add(value);
         }
-        if (index < countOfElement + 1) {
-            if (countOfElement == elementData.length) {
+        if (index < size + 1) {
+            if (size == elementData.length) {
                 elementData = grow();
             }
-            Object[] newData = new Object[sizeOfArrey];
+            Object[] newData = new Object[elementData.length];
             System.arraycopy(elementData, 0, newData, 0, index + 1);
             newData[index] = value;
-            System.arraycopy(elementData, index, newData, index + 1, countOfElement + 1 - index);
+            System.arraycopy(elementData, index, newData, index + 1, size + 1 - index);
             elementData = newData;
-            countOfElement++;
+            size++;
         }
     }
 
     @Override
     public void addAll(List<T> list) {
         Object[] arrList = new Object[list.size()];
-        while (countOfElement == elementData.length || countOfElement
+        while (size == elementData.length || size
                 + list.size() > elementData.length) {
             elementData = grow();
         }
         for (int i = 0; i < list.size(); i++) {
             arrList[i] = list.get(i);
         }
-        System.arraycopy(list, 0, elementData, countOfElement, list.size());
-        countOfElement += list.size();
+        System.arraycopy(arrList, 0, elementData, size, arrList.length);
+        size += list.size();
     }
 
     @Override
     public T get(int index) {
-        if (index < 0 || index > countOfElement) {
+        if (index < 0 || index >= size) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
         return (T) elementData[index];
@@ -75,7 +72,7 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public void set(T value, int index) {
-        if (index < 0 || index > countOfElement) {
+        if (index < 0 || index >= size) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
         elementData[index] = value;
@@ -84,36 +81,39 @@ public class ArrayList<T> implements List<T> {
     @Override
     public T remove(int index) {
         Object removedObject = null;
-        if (index >= countOfElement || index < 0) {
+        if (index > size || index < 0) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
         removedObject = elementData[index];
-        Object[] newData = new Object[sizeOfArrey];
+        Object[] newData = new Object[elementData.length];
         System.arraycopy(elementData, 0, newData, 0, index + 1);
-        System.arraycopy(elementData, index + 1, newData, index, countOfElement - index + 1);
+        System.arraycopy(elementData, index + 1, newData, index, size - index + 1);
         elementData = newData;
-        countOfElement--;
+        size--;
         return (T) removedObject;
     }
 
     @Override
     public T remove(T element) {
         int tempCount = 0;
+        if (element == null) {
+            throw new NoSuchElementException("There is no such element in the array");
+        }
         for (Object o : elementData) {
             if (!o.equals(element)) {
                 tempCount++;
             }
         }
-        if (tempCount == countOfElement || element == null) {
+        if (tempCount == size) {
             throw new NoSuchElementException("There is no such element in the array");
         }
-        for (int i = 0; i < countOfElement; i++) {
+        for (int i = 0; i < size; i++) {
             if (elementData[i].equals(element)) {
-                Object[] newData = new Object[sizeOfArrey];
+                Object[] newData = new Object[elementData.length];
                 System.arraycopy(elementData, 0, newData, 0, i + 1);
-                System.arraycopy(elementData, i + 1, newData, i, countOfElement - i + 1);
+                System.arraycopy(elementData, i + 1, newData, i, size - i + 1);
                 elementData = newData;
-                countOfElement--;
+                size--;
                 return (T) elementData[i];
             }
         }
@@ -122,11 +122,11 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public int size() {
-        return countOfElement;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return countOfElement == 0;
+        return size == 0;
     }
 }
