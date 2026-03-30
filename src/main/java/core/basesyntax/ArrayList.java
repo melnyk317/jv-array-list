@@ -3,66 +3,66 @@ package core.basesyntax;
 import java.util.NoSuchElementException;
 
 public class ArrayList<T> implements List<T> {
-    private final static int DEFAULT_CAPACITI = 10;
+    private static final int DEFAULT_CAPACITY = 10;
     private Object[] elementData;
-    private int count;
-    private int size;
+    private int countOfElement;
+    private int sizeOfArrey;
 
     public ArrayList() {
-        elementData = new Object[DEFAULT_CAPACITI];
-        count = 0;
-        size = DEFAULT_CAPACITI;
+        elementData = new Object[DEFAULT_CAPACITY];
+        countOfElement = 0;
+        sizeOfArrey = DEFAULT_CAPACITY;
     }
 
     private Object[] grow() {
-        size = size + size / 2;
-        Object[] newData = new Object[size];
-        System.arraycopy(elementData, 0, newData, 0, count);
+        sizeOfArrey = sizeOfArrey + sizeOfArrey / 2;
+        Object[] newData = new Object[sizeOfArrey];
+        System.arraycopy(elementData, 0, newData, 0, countOfElement);
         return newData;
     }
 
     @Override
     public void add(T value) {
-        if (count == elementData.length) {
+        if (countOfElement == elementData.length) {
             elementData = grow();
         }
-        elementData[count] = value;
-        count++;
+        elementData[countOfElement] = value;
+        countOfElement++;
     }
 
     @Override
     public void add(T value, int index) {
-        if (index < count + 1) {
+        if (index < 0 || index >= countOfElement) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
-        if (index == count + 1) {
+        if (index == countOfElement + 1) {
             add(value);
         }
-        if (index < count + 1) {
-            if (count == elementData.length) {
+        if (index < countOfElement + 1) {
+            if (countOfElement == elementData.length) {
                 elementData = grow();
             }
-            Object[] newData = new Object[size];
+            Object[] newData = new Object[sizeOfArrey];
             System.arraycopy(elementData, 0, newData, 0, index + 1);
             newData[index] = value;
-            System.arraycopy(elementData, index, newData, index + 1, count + 1 - index);
+            System.arraycopy(elementData, index, newData, index + 1, countOfElement + 1 - index);
             elementData = newData;
-            count++;
+            countOfElement++;
         }
     }
 
     @Override
     public void addAll(List<T> list) {
-        while (count == elementData.length || count + list.size() > elementData.length) {
+        while (countOfElement == elementData.length || countOfElement + list.size() > elementData.length) {
             elementData = grow();
         }
-        System.arraycopy(list, 0, elementData, count + 1, list.size());
-        count += list.size();
+        System.arraycopy(list, 0, elementData, countOfElement, list.size());
+        countOfElement += list.size();
     }
 
     @Override
     public T get(int index) {
-        if (index < count) {
+        if (index < 0 || index > countOfElement) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
         return (T) elementData[index];
@@ -70,7 +70,7 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public void set(T value, int index) {
-        if (index < count) {
+        if (index < 0 || index > countOfElement) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
         elementData[index] = value;
@@ -78,47 +78,49 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T remove(int index) {
-        if (index < count) {
+        if (index < countOfElement) {
             throw new ArrayListIndexOutOfBoundsException("The index is invalid");
         }
-        Object[] newData = new Object[size];
+        Object removed_object = elementData[index];
+        Object[] newData = new Object[sizeOfArrey];
         System.arraycopy(elementData, 0, newData, 0, index + 1);
-        System.arraycopy(elementData, index + 1, newData, index, count - index + 1);
+        System.arraycopy(elementData, index + 1, newData, index, countOfElement - index + 1);
         elementData = newData;
-        count--;
-        return (T) elementData[index];
+        countOfElement--;
+        return (T)removed_object;
     }
 
     @Override
     public T remove(T element) {
+        int tempCount = 0;
         for (Object o : elementData) {
             if (!o.equals(element)) {
-                throw new NoSuchElementException("There is no such element");
+                tempCount++;
             }
         }
-        for (int i = 0; i < count; i++) {
+        if (tempCount == countOfElement) {
+            throw new NoSuchElementException("There is no such element in the array");
+        }
+        for (int i = 0; i < countOfElement; i++) {
             if (elementData[i].equals(element)) {
-                Object[] newData = new Object[size];
+                Object[] newData = new Object[sizeOfArrey];
                 System.arraycopy(elementData, 0, newData, 0, i + 1);
-                System.arraycopy(elementData, i + 1, newData, i, count - i + 1);
+                System.arraycopy(elementData, i + 1, newData, i, countOfElement - i + 1);
                 elementData = newData;
+                countOfElement--;
                 return (T) elementData[i];
             }
         }
-        count--;
         return null;
     }
 
     @Override
     public int size() {
-        return size;
+        return countOfElement + 1;
     }
 
     @Override
     public boolean isEmpty() {
-        if (elementData[0] == null) {
-            return true;
-        }
-        return false;
+        return countOfElement == 0;
     }
 }
